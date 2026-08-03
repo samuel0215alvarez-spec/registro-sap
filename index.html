@@ -106,65 +106,96 @@ hidden>
 
 <img id="preview">
 
-<button id="btnApi">
-
-Probar conexión API
-
-</button>
-
 <p id="estado"></p>
 
 </div>
 
 <script>
 
-const API="https://script.google.com/macros/s/AKfycbyWv5YAVmfeBcZ5-o5WoQc3VdAvoMMDPEShirnCU0wsbpFO_jJHmxei5HkIjxP6lCg/exec";
+const WEBAPP="https://script.google.com/macros/s/AKfycbyzrLYkxbC86I7MH7U98ZKRh5kTEdFEe7puJiIRnzbY5BJkG4RE9fQoRQtUs3MEqxQ/exec";
 
 const foto=document.getElementById("foto");
 const preview=document.getElementById("preview");
 const estado=document.getElementById("estado");
 
-document
-.getElementById("btnFoto")
-.onclick=()=>foto.click();
+document.getElementById("btnFoto").onclick=()=>{
 
-foto.onchange=()=>{
-
-    if(foto.files.length===0) return;
-
-    preview.src=URL.createObjectURL(foto.files[0]);
-
-    preview.style.display="block";
+    foto.click();
 
 };
 
-document
-.getElementById("btnApi")
-.onclick=async()=>{
+foto.onchange=async()=>{
 
-    estado.innerHTML="Conectando...";
+    if(foto.files.length===0) return;
+
+    const archivo=foto.files[0];
+
+    preview.src=URL.createObjectURL(archivo);
+
+    preview.style.display="block";
+
+    estado.innerHTML="Convirtiendo imagen...";
+
+    const base64=await convertirBase64(archivo);
+
+    estado.innerHTML="Enviando al servidor...";
 
     try{
 
-        const respuesta=await fetch(API,{
-            method:"POST"
+        const respuesta=await fetch(WEBAPP,{
+
+            method:"POST",
+
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            body:JSON.stringify({
+
+                imagen:base64
+
+            })
+
         });
 
         const json=await respuesta.json();
 
         estado.innerHTML=json.mensaje;
 
-    }catch(error){
+    }
+
+    catch(error){
 
         console.log(error);
 
-        estado.innerHTML="Error al conectar con la API";
+        estado.innerHTML="❌ "+error.message;
 
     }
 
 };
 
+function convertirBase64(file){
+
+    return new Promise((resolve,reject)=>{
+
+        const reader=new FileReader();
+
+        reader.onload=()=>{
+
+            resolve(reader.result.split(",")[1]);
+
+        };
+
+        reader.onerror=reject;
+
+        reader.readAsDataURL(file);
+
+    });
+
+}
+
 </script>
 
 </body>
+
 </html>

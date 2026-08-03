@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>Registro SAP</title>
 
@@ -12,7 +11,7 @@
 
 body{
     margin:0;
-    font-family:Arial,sans-serif;
+    font-family:Arial;
     background:#f5f5f5;
     display:flex;
     justify-content:center;
@@ -25,15 +24,15 @@ body{
     width:90%;
     max-width:420px;
 
-    background:white;
+    background:#fff;
+
+    padding:25px;
 
     border-radius:15px;
 
-    padding:30px;
-
     text-align:center;
 
-    box-shadow:0 5px 20px rgba(0,0,0,.15);
+    box-shadow:0 5px 20px rgba(0,0,0,.2);
 
 }
 
@@ -51,11 +50,9 @@ button{
 
     background:#1976d2;
 
-    color:white;
+    color:#fff;
 
     cursor:pointer;
-
-    margin-top:15px;
 
 }
 
@@ -73,129 +70,4 @@ img{
 
 #estado{
 
-    margin-top:20px;
-
-    font-weight:bold;
-
-    color:#1976d2;
-
-}
-
-</style>
-
-</head>
-
-<body>
-
-<div class="card">
-
-<h2>Registro SAP</h2>
-
-<input
-id="foto"
-type="file"
-accept="image/*"
-capture="environment"
-hidden>
-
-<button id="btnFoto">
-
-📷 Tomar fotografía
-
-</button>
-
-<img id="preview">
-
-<p id="estado"></p>
-
-</div>
-
-<script>
-
-const WEBAPP="https://script.google.com/macros/s/AKfycbyzrLYkxbC86I7MH7U98ZKRh5kTEdFEe7puJiIRnzbY5BJkG4RE9fQoRQtUs3MEqxQ/exec";
-
-const foto=document.getElementById("foto");
-const preview=document.getElementById("preview");
-const estado=document.getElementById("estado");
-
-document.getElementById("btnFoto").onclick=()=>{
-
-    foto.click();
-
-};
-
-foto.onchange=async()=>{
-
-    if(foto.files.length===0) return;
-
-    const archivo=foto.files[0];
-
-    preview.src=URL.createObjectURL(archivo);
-
-    preview.style.display="block";
-
-    estado.innerHTML="Convirtiendo imagen...";
-
-    const base64=await convertirBase64(archivo);
-
-    estado.innerHTML="Enviando al servidor...";
-
-    try{
-
-        const respuesta=await fetch(WEBAPP,{
-
-            method:"POST",
-
-            headers:{
-                "Content-Type":"application/json"
-            },
-
-            body:JSON.stringify({
-
-                imagen:base64
-
-            })
-
-        });
-
-        const json=await respuesta.json();
-
-        estado.innerHTML=json.mensaje;
-
-    }
-
-    catch(error){
-
-        console.log(error);
-
-        estado.innerHTML="❌ "+error.message;
-
-    }
-
-};
-
-function convertirBase64(file){
-
-    return new Promise((resolve,reject)=>{
-
-        const reader=new FileReader();
-
-        reader.onload=()=>{
-
-            resolve(reader.result.split(",")[1]);
-
-        };
-
-        reader.onerror=reject;
-
-        reader.readAsDataURL(file);
-
-    });
-
-}
-
-</script>
-
-</body>
-
-</html>
+    margin-top:
